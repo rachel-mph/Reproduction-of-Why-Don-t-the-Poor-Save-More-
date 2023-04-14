@@ -1,9 +1,9 @@
-*                       DO-FILE TO GENERATE TABLES IN PAPER:
+*             Reproduction: DO-FILE TO GENERATE TABLES IN PAPER:
 **********************************************************************************
 *       "WHY DON'T THE POOR SAVE MORE? EVIDENCE FROM HEALTH SAVINGS EXPERIMENTS"
 **********************************************************************************
 *                by PASCALINE DUPAS AND JONATHAN ROBINSON
-* 						AMERICAN ECONOMIC REVIEW
+* 			AMERICAN ECONOMIC REVIEW
 
 
 
@@ -120,21 +120,21 @@ for any hsa_deposit_hsa hsacc_balance hsa_helped_save_more hsacc_num_deposits hs
 
 use HARP_ROSCA_final, clear;
 
-gen bg_female_married=bg_female*bg_married;
+gen bg_female_married=bg_female*bg_married; // marital status 
 
-global individual_controls "bg_b1_age bg_female bg_female_married bg_provider bg_hyperbolic  bg_pat_now_impat_later bg_max_discount bg_n_roscas";
+global individual_controls "bg_b1_age bg_female bg_female_married bg_hyperbolic  bg_pat_now_impat_later bg_max_discount multitreat"; // create individual controls 
 
 
 *Column 1;
-xi: reg fol2_amtinvest_healthproducts safe_box locked_box health_pot health_savings multitreat rosbg_monthly_contrib i.strata, cluster(id_harp_rosca);
-testparm safe_box locked_box health_pot  health_savings;
-lincom safe_box;
-lincom locked_box-safe_box;
-lincom health_pot-locked_box;
+xi: reg fol2_amtinvest_healthproducts safe_box locked_box health_pot health_savings i.strata, cluster(id_harp_rosca); // treatment effects 
+testparm safe_box locked_box health_pot  health_savings; // effects of features 
+lincom safe_box; // P1 
+lincom locked_box-safe_box; // P2 - P1
+lincom health_pot-locked_box; // P3 - P2
 sum fol2_amtinvest_healthproducts if e(sample) & encouragement==1;
 
 *Column 2;
-xi: reg fol2_amtinvest_healthproducts safe_box locked_box health_pot  health_savings multitreat rosbg_monthly_contrib i.strata $individual_controls, cluster(id_harp_rosca);
+xi: reg fol2_amtinvest_healthproducts safe_box locked_box health_pot  health_savings i.strata $individual_controls, cluster(id_harp_rosca); // treatment effects with controls 
 testparm safe_box locked_box health_pot  health_savings;
 lincom safe_box;
 lincom locked_box-safe_box;
@@ -143,21 +143,21 @@ sum fol2_amtinvest_healthproducts if e(sample) & encouragement==1;
 
 
 *Column 3;
-xi: reg fol2_illness_untreated_3mo safe_box locked_box health_pot  health_savings multitreat rosbg_monthly_contrib i.strata, cluster(id_harp_rosca);
+xi: reg fol2_illness_untreated_3mo safe_box locked_box health_pot  health_savings i.strata, cluster(id_harp_rosca);
 testparm safe_box locked_box health_pot  health_savings;
 lincom safe_box;
-lincom health_savings-safe_box;
+lincom health_savings-safe_box; // P4 - P1 
 sum fol2_illness_untreated_3mo if e(sample) & encouragement==1;
 
 *Column 4;
-xi: reg fol2_illness_untreated_3mo safe_box locked_box health_pot  health_savings multitreat rosbg_monthly_contrib i.strata $individual_controls, cluster(id_harp_rosca);
+xi: reg fol2_illness_untreated_3mo safe_box locked_box health_pot  health_savings i.strata $individual_controls, cluster(id_harp_rosca);
 testparm safe_box locked_box health_pot  health_savings;
 lincom safe_box;
 lincom health_savings-safe_box;
 sum fol2_illness_untreated_3mo if e(sample) & encouragement==1;
 
 *Column 5;
-xi: reg fol2_reached_goal safe_box locked_box health_pot  health_savings multitreat rosbg_monthly_contrib i.strata, cluster(id_harp_rosca);
+xi: reg fol2_reached_goal safe_box locked_box health_pot  health_savings i.strata, cluster(id_harp_rosca);
 testparm safe_box locked_box health_pot  health_savings;
 lincom safe_box;
 lincom locked_box-safe_box;
@@ -166,7 +166,7 @@ lincom health_savings-safe_box;
 sum fol2_reached_goal if e(sample) & encouragement==1;
 
 *Column 6;
-xi: reg fol2_reached_goal safe_box locked_box health_pot  health_savings multitreat rosbg_monthly_contrib i.strata $individual_controls, cluster(id_harp_rosca);
+xi: reg fol2_reached_goal safe_box locked_box health_pot  health_savings i.strata $individual_controls, cluster(id_harp_rosca);
 testparm safe_box locked_box health_pot  health_savings;
 lincom safe_box;
 lincom locked_box-safe_box;
